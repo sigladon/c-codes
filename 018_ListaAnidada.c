@@ -171,45 +171,76 @@ void clearInputBuffer() {
 	while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// Función para ordenar la lista
+// Función para ordenar la lista de forma ascendente
 void sortAscending(LinkedList *list) {
     int swapped;
     Node *ptr = NULL;
-    if (list->head == NULL)
+    Node *temp;
+    
+    // Verifica que la lista tenga más de un elemento. De no ser así no hay que ordenar.
+    if (list->head == NULL || list->head->next == NULL)
         return;
 
     do {
         swapped = 0;
-        Node *temp = list->head;
+        temp = list->head;
 
         while (temp->next != ptr) {
             if (temp->value > temp->next->value) {
-                int tempValue = temp->value;
-                temp->value = temp->next->value;
-                temp->next->value = tempValue;
+                // Intercambia las referencias next de los nodos
+                Node *tempNext = temp->next; // Nodo temporal que va a ser el siguiente al temporal
+                temp->next = tempNext->next; // Se intercambian las direcciones entre nodos
+                tempNext->next = temp;
+                
+                // Comprueba si el nodo actual es el primero
+                if (temp == list->head) {
+                    list->head = tempNext; // Si lo es, el head va a apuntar a este nodo
+                } else {
+                    Node *prev = list->head; // Si no lo es, verifica su lugar en la lista
+                    while (prev->next != temp) {
+                        prev = prev->next;
+                    }
+                    prev->next = tempNext;
+                }
+
                 swapped = 1;
             }
-            temp = temp->next;
+            temp = temp->next; // El nodo actual pasa a ser el último
         }
-        ptr = temp;
-    } while (swapped);
+        ptr = temp; // Se actualiza el ptr para que apunte al último elemento ordenado
+    } while (swapped); // Realiza el bucle hasta que no se haga ningún cambio en la lista
 }
 
+// Función para ordenar de forma descendente
 void sortDescending(LinkedList *list) {
     int swapped;
     Node *ptr = NULL;
-    if (list->head == NULL)
+    Node *temp;
+
+    if (list->head == NULL || list->head->next == NULL)
         return;
 
     do {
         swapped = 0;
-        Node *temp = list->head;
+        temp = list->head;
 
         while (temp->next != ptr) {
             if (temp->value < temp->next->value) {
-                int tempValue = temp->value;
-                temp->value = temp->next->value;
-                temp->next->value = tempValue;
+                // Intercambia las referencias next de los nodos
+                Node *tempNext = temp->next;
+                temp->next = tempNext->next;
+                tempNext->next = temp;
+
+                if (temp == list->head) {
+                    list->head = tempNext;
+                } else {
+                    Node *prev = list->head;
+                    while (prev->next != temp) {
+                        prev = prev->next;
+                    }
+                    prev->next = tempNext;
+                }
+
                 swapped = 1;
             }
             temp = temp->next;
@@ -217,3 +248,4 @@ void sortDescending(LinkedList *list) {
         ptr = temp;
     } while (swapped);
 }
+
